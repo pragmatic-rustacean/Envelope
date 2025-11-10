@@ -1,11 +1,18 @@
 #![allow(dead_code, unused_variables, unused_imports)]
 
-use std::net::TcpListener;
-
-use newslatter::run;
+use newslatter::prelude::*;
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
-    let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind a random port.");
-    run(listener)?.await
+    let configuration = get_configuration().expect("Failed to read configuration");
+
+    let address = format!("127.0.0.1: {}", configuration.application_port);
+
+    let connection_pool = PgPool::connect(&configuration.database.connection_string())
+        .await
+        .expect("Failed to connect to postgres.");
+
+    let listener = TcpListener::bind(address)?;
+
+    run(listener, connection_pool)?.await
 }
