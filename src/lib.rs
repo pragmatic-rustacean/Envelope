@@ -14,4 +14,6 @@ pub mod prelude {
     pub use sqlx::*;
     pub use std::net::TcpListener;
     pub use uuid::*;
+    pub use std::*;
+    pub use env_logger::{Env, Builder};
 }
