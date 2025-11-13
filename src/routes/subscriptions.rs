@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use sqlx::types::chrono::Utc;
 use uuid::Uuid;
 

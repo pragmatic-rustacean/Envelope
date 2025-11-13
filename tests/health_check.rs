@@ -1,5 +1,3 @@
-#![allow(unused_variables)]
-
 use newslatter::prelude::*;
 use reqwest::Client;
 use std::net::TcpListener;
@@ -23,7 +21,7 @@ async fn spawn_app() -> TestApp {
     let connection_pool = configure_db(&configuration.database).await;
 
     let server = run(listener, connection_pool.clone()).expect("Failed to bind address");
-    let _ = tokio::spawn(server);
+    tokio::spawn(server);
 
     TestApp {
         address,
@@ -112,7 +110,7 @@ async fn subscribe_returns_a_400_for_invalid_form_data() {
     for (invalid_body, error_message) in test_cases {
         // Act
         let response = client
-            .post(&format!("{}/subscriptions", &app.address))
+            .post(format!("{}/subscriptions", &app.address))
             .header("Content-type", "application/x-www-form-urlencoded")
             .body(invalid_body)
             .send()

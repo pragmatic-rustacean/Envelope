@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -x
 set -eo pipefail
-
+#
 if ! [ -x "$(command -v sqlx)" ]; then
   echo "Error: sqlx is not installed."
   exit 1
@@ -15,7 +15,7 @@ if ! [ -x "$(command -v sqlx)" ]; then
   echo >&2 "To install it"
   exit 1
 fi
-
+#
 # Check if a custom user has been set, otherwise default to 'postgres'
 DB_USER="${POSTGRES_USER:=postgres}"
 # Check if a custom password has been set, otherwise default to 'password'
@@ -43,7 +43,7 @@ fi
 
 # Keep pinging Postgres until it's ready to accept commands
 export PGPASSWORD="${DB_PASSWORD}"
-
+#
 until psql -h "${DB_HOST}" -U "${DB_USER}" -p "${DB_PORT}" -d "postgres" -c '\q'; do
   echo >&2 "Postgres is still unavailable - sleeping"
   sleep 1
