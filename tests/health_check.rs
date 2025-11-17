@@ -1,14 +1,35 @@
 use newslatter::prelude::*;
-use reqwest::Client;
-use std::net::TcpListener;
 
 pub struct TestApp {
     pub address: String,
     pub db_pool: PgPool,
 }
 
+// Ensure the `tracing` stack is only initialized once using `once_cell`
+static TRACING: Lazy<()> = Lazy::new(|| {
+    let default_filter = "info".to_string();
+    let subscriber_name = "test".to_string();
+
+    // We cannot assign the output of `get_subsciber` to a variable based on
+    // the value TEST_LOG because the sink is part of the type returned by
+    // `get_subscriber`, therefore they are not the same type. We could work
+    // around it, but this is the most straight-forward wy of moving forward.
+
+    if std::env::var("TEST_LOG").is_ok() {
+        let subscriber = get_subscriber(subscriber_name, default_filter, std::io::stdout);
+        init_subscriber(subscriber);
+    } else {
+        let subscriber = get_subscriber(subscriber_name, default_filter, std::io::sink);
+        init_subscriber(subscriber);
+    }
+});
+
 // Launch our application in the background.
 async fn spawn_app() -> TestApp {
+    // The first time `initialize` is invoked the code in `TRACING` is executed.
+    // All other invocations will instead skip execution.
+    Lazy::force(&TRACING);
+
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
 
     let port = listener.local_addr().unwrap().port();
@@ -21,6 +42,7 @@ async fn spawn_app() -> TestApp {
     let connection_pool = configure_db(&configuration.database).await;
 
     let server = run(listener, connection_pool.clone()).expect("Failed to bind address");
+
     tokio::spawn(server);
 
     TestApp {
