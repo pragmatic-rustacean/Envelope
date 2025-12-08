@@ -1,0 +1,6 @@
+.env
+target/
+migrations/
+Dockerfile,
+scripts/
+tests/

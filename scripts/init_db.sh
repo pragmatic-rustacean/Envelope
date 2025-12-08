@@ -15,7 +15,7 @@ if ! [ -x "$(command -v sqlx)" ]; then
   echo >&2 "To install it"
   exit 1
 fi
-#
+
 # Check if a custom user has been set, otherwise default to 'postgres'
 DB_USER="${POSTGRES_USER:=postgres}"
 # Check if a custom password has been set, otherwise default to 'password'
@@ -30,7 +30,7 @@ DB_HOST="${DB_HOST:=localhost}"
 
 # Launch postgres using Docker
 # Allow to skip Docker if a dockerized Postgres database is already running
-if [[-z "${SKIP_DOCKER}"]]; then
+if [[ -z "${SKIP_DOCKER}" ]]; then
   docker run \
     -e POSTGRES_USER=${DB_USER} \
     -e POSTGRES_PASSWORD=${DB_PASSWORD} \
@@ -39,10 +39,10 @@ if [[-z "${SKIP_DOCKER}"]]; then
     -d postgres \
     postgres -N 1000
 fi
-#    ^ Increased maximum number of connections for testing purposes.
+# #    ^ Increased maximum number of connections for testing purposes.
 
 # Keep pinging Postgres until it's ready to accept commands
-export PGPASSWORD="${DB_PASSWORD}"
+ export PGPASSWORD="${DB_PASSWORD}"
 #
 until psql -h "${DB_HOST}" -U "${DB_USER}" -p "${DB_PORT}" -d "postgres" -c '\q'; do
   echo >&2 "Postgres is still unavailable - sleeping"
