@@ -1,4 +1,6 @@
 use newslatter::prelude::*;
+use reqwest::Client;
+use std::net::TcpListener;
 
 pub struct TestApp {
     pub address: String,

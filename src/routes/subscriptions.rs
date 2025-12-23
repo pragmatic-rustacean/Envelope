@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use sqlx::types::chrono::Utc;
 use uuid::Uuid;
 
@@ -44,4 +46,12 @@ async fn insert_subscriber(form: &FormData, pool: &PgPool) -> Result<(), sqlx::E
     })?;
 
     Ok(())
+}
+
+/*
+  Returns 'true' if the provided input passes all our validation constraints, on subscribers 'name(s)', otherwise 'false'.
+*/
+pub fn is_valid_name(name: &str) -> &str {
+    let clean_name = name.trim().is_empty();
+    unimplemented!("Fix me, love...");
 }

@@ -24,6 +24,7 @@ tracing = { version = "0.1.41", features = ["log"] }
 log = "0.4.28"
 secrecy = { version = "0.10.3", features = ["serde"] }
 tracing-actix-web = "0.7.19"
+unicode-segmentation = "1.12.0"
 
 [dependencies.sqlx]
 version = "~0.8.0"
@@ -43,3 +44,9 @@ path = "src/lib.rs"
 [[bin]]
 path = "src/main.rs"
 name = "newslatter"
+
+[dev-dependencies]
+claims = "0.8.0"
+fake = "4.4.0"
+quickcheck = "1.0.3"
+quickcheck_macros = "1.1.0"

@@ -52,7 +52,7 @@ pub enum Environment {
 impl Environment {
     pub fn as_str(&self) -> &'static str {
         match self {
-            Environment::Local => "development",
+            Environment::Local => "local",
             Environment::Production => "production",
         }
     }
@@ -62,7 +62,7 @@ impl TryFrom<String> for Environment {
     type Error = String;
 
     fn try_from(value: String) -> result::Result<Self, Self::Error> {
-        match value.to_lowercase().as_str() {
+        match value.trim().to_lowercase().as_str() {
             "local" => Ok(Self::Local),
             "production" => Ok(Self::Production),
             other => Err(format!(
@@ -80,7 +80,7 @@ pub fn get_configuration() -> Result<Settings, ConfigError> {
     // Detect the running environment.
     // Default to 'local' if not specified.
     let environment: Environment = env::var("APP_ENVIRONMENT")
-        .unwrap_or_else(|_| "local".into())
+        .unwrap_or_else(|_| "local".trim().into())
         .try_into()
         .expect("Failed to parse APP_ENVIRONMENT");
 
