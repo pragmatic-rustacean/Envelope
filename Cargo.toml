@@ -1,5 +1,5 @@
 [package]
-name = "Envelope"
+name = "envelope"
 version = "0.1.0"
 authors = ["James Muriuki <geniusinrust@gmail.com"]
 edition = "2024"

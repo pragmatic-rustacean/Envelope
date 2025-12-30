@@ -1,4 +1,4 @@
-use newslatter::prelude::*;
+use envelope::prelude::*;
 use reqwest::Client;
 use std::net::TcpListener;
 

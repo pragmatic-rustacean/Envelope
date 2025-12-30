@@ -1,4 +1,4 @@
-use newslatter::prelude::*;
+use envelope::prelude::*;
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
