@@ -21,11 +21,10 @@ tracing-subscriber = { version = "0.3.20", features = [
   "env-filter",
 ] }
 tracing = { version = "0.1.41", features = ["log"] }
-log = "0.4.28"
-secrecy = { version = "0.10.3", features = ["serde"] }
 tracing-actix-web = "0.7.19"
 unicode-segmentation = "1.12.0"
 validator = "0.20.0"
+secrecy = {version = "0.10.3", features = ["serde"]}
 
 [dependencies.sqlx]
 version = "~0.8.0"

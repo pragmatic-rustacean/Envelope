@@ -751,7 +751,6 @@ dependencies = [
  "config",
  "env_logger 0.11.8",
  "fake",
- "log",
  "once_cell",
  "quickcheck",
  "quickcheck_macros",

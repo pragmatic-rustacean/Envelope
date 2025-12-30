@@ -60,4 +60,8 @@ mod tests {
         let email = "@gmail.com".to_string();
         assert_err!(SubscriberEmail::parse(email));
     }
+    #[test]
+    fn a_valid_email_is_parsed_successfully() {
+        //
+    }
 }

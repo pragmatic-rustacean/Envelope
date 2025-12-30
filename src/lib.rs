@@ -1,24 +1,23 @@
 #![allow(ambiguous_glob_reexports, unused_imports)]
 
 mod configuration;
+mod domain;
 mod routes;
 mod startup;
 mod telemetry;
-mod domain;
 
 pub mod prelude {
     pub use crate::configuration::*;
     pub use crate::domain::*;
+    pub use crate::domain::*;
     pub use crate::routes::{health_check::*, subscriptions::*};
     pub use crate::startup::*;
     pub use crate::telemetry::*;
-    pub use crate::domain::*;
     pub use actix_web::{App, HttpResponse, HttpServer, dev::Server, middleware::*, web::*};
-    pub use config::*;
-    pub use env_logger::{Builder, Env};
+    pub use config::{Config, ConfigError};
     pub use once_cell::sync::*;
     pub use reqwest::Client;
-    pub use secrecy::*;
+    pub use secrecy::{SecretBox, ExposeSecret};
     pub use serde::{Deserialize, Serialize};
     pub use sqlx::*;
     pub use std::net::TcpListener;
