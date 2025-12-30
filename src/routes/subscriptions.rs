@@ -1,6 +1,8 @@
 #![allow(unused)]
 
+use crate::domain::subscriber_name::{NewSubscriber, SubscriberName};
 use sqlx::types::chrono::Utc;
+use unicode_segmentation::UnicodeSegmentation;
 use uuid::Uuid;
 
 use crate::prelude::*;
@@ -20,22 +22,34 @@ pub struct FormData {
   )
 )]
 pub async fn subscribe(form: Form<FormData>, pool: Data<PgPool>) -> HttpResponse {
-    match insert_subscriber(&form, &pool).await {
+    let name = match SubscriberName::parse_name(form.0.name) {
+        Ok(name) => name,
+        Err(_) => return HttpResponse::BadRequest().finish(),
+    };
+
+    let subscriber = NewSubscriber {
+        email: form.0.email,
+        name,
+    };
+    match insert_subscriber(&subscriber, &pool).await {
         Ok(_) => HttpResponse::Ok().finish(),
         Err(_) => HttpResponse::InternalServerError().finish(),
     }
 }
 
-#[tracing::instrument(name = "Saving new subscriber's details ", skip(form, pool))]
-async fn insert_subscriber(form: &FormData, pool: &PgPool) -> Result<(), sqlx::Error> {
+#[tracing::instrument(name = "Saving new subscriber's details ", skip(new_subscriber, pool))]
+async fn insert_subscriber(
+    new_subscriber: &NewSubscriber,
+    pool: &PgPool,
+) -> Result<(), sqlx::Error> {
     query!(
         r#"
         INSERT INTO subscriptions (id, email, names, subscribed_at)
         VALUES ($1, $2, $3, $4)
       "#,
         Uuid::new_v4(),
-        form.email,
-        form.name,
+        new_subscriber.email,
+        new_subscriber.name.as_ref(),
         Utc::now()
     )
     .execute(pool)
@@ -44,14 +58,5 @@ async fn insert_subscriber(form: &FormData, pool: &PgPool) -> Result<(), sqlx::E
         tracing::error!("Failed to execute query {}", e);
         e
     })?;
-
     Ok(())
-}
-
-/*
-  Returns 'true' if the provided input passes all our validation constraints, on subscribers 'name(s)', otherwise 'false'.
-*/
-pub fn is_valid_name(name: &str) -> &str {
-    let clean_name = name.trim().is_empty();
-    unimplemented!("Fix me, love...");
 }
