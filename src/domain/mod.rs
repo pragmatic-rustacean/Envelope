@@ -5,12 +5,27 @@ pub mod subscriber_name;
 #[cfg(test)]
 mod tests {
     use claims::{assert_err, assert_ok};
-    use tracing::Subscriber;
+    use fake::{Fake, faker::internet::en::SafeEmail};
 
     use crate::domain::{
-        subscriber_email::SubscriberEmail,
-        subscriber_name::{NewSubscriber, SubscriberName},
+        new_subscriber::NewSubscriber, subscriber_email::SubscriberEmail,
+        subscriber_name::SubscriberName,
     };
+
+    #[derive(Clone, Debug)]
+    struct ValidEmailFixture(pub String);
+
+    impl quickcheck::Arbitrary for ValidEmailFixture {
+        fn arbitrary(_g: &mut quickcheck::Gen) -> Self {
+            let email = SafeEmail().fake();
+            Self(email)
+        }
+    }
+
+    #[quickcheck_macros::quickcheck]
+    fn a_valid_email_is_parsed_successfully(valid_email: ValidEmailFixture) {
+        assert_ok!(SubscriberEmail::parse(valid_email.0));
+    }
 
     #[test]
     fn a_256_grapheme_long_name_is_valid() {
@@ -59,9 +74,5 @@ mod tests {
     fn email_missing_subject_is_rejected() {
         let email = "@gmail.com".to_string();
         assert_err!(SubscriberEmail::parse(email));
-    }
-    #[test]
-    fn a_valid_email_is_parsed_successfully() {
-        //
     }
 }
